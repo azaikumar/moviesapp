@@ -1,4 +1,5 @@
 import {Component} from 'react'
+import {TailSpin} from 'react-loader-spinner'
 import MovieItemCard from '../MovieItemCard'
 import { Pagination } from 'antd';
 import './index.css'
@@ -61,23 +62,42 @@ class MoviesPage extends Component {
     }, this.getMovieDetails)
   }
 
+  renderLoadingView = () => (
+    <div className="loader-container">
+      <TailSpin type="ThreeDots" color="#0b69ff" height="50" width="50" />
+    </div>
+  )
+
+  renderFailureView = () => {
+    <div>
+      <p>Sorry Something Went Wrong</p>
+    </div>
+  }
+
+
   render() {
-    const {searchInput, moviesdata, totalPages, pageNum} = this.state
+    const {moviesdata, searchInput,totalPages, pageNum} = this.state
+    
+   
     return (
       <div className="app-bg">
         <div className='search-bar'>
           <p>MOVIE NAME</p>
-          <input type="search" className='input-bar' placeholder='Jurasic Park' value={searchInput} onChange={e => this.handleSearch(e.target.value)} />
+          <input type="search" className='input-bar' placeholder='Titanic' value={searchInput} onChange={e => this.handleSearch(e.target.value)} />
           <button className='search-btn'>Search!</button>
         </div>
-        <ul className='movie-item-container'>
+        {apiStatusConstants.success ? (
+          <ul className='movie-item-container'>
           {moviesdata.map(eachMovie => <MovieItemCard data={eachMovie} key={eachMovie.id} />)}
         </ul>
+        ) : (
+          this.renderLoadingView()
+        )}
         <div className='pagination'>
           <Pagination defaultCurrent={pageNum} total={totalPages} showSizeChanger={false} onChange={(page) => this.handlePage(page)} />
         </div>
       </div>
-    )
+    )       
   }
 }
 
